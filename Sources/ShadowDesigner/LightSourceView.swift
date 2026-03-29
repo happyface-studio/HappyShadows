@@ -1,9 +1,8 @@
 import SwiftUI
 
-/// Sun icon with a glowing white thumb, dashed rays, and a stem to the brightness knob.
+/// Sun icon with a glowing white thumb, dashed rays, and an orbit ring for the radius knob.
 struct LightSourceView: View {
-    let brightness: Double
-    let knobDistance: CGFloat
+    let orbitalRadius: CGFloat
     let tint: Color
 
     private let sunRadius: CGFloat = 12
@@ -12,24 +11,29 @@ struct LightSourceView: View {
 
     var body: some View {
         ZStack {
-            // Rays + stem drawn in Canvas
+            // Rays + orbit ring drawn in Canvas
             Canvas { context, size in
                 let center = CGPoint(x: size.width / 2, y: size.height / 2)
-                let alpha = 0.4 + brightness * 0.5
-                let color = tint.opacity(alpha)
+                let color = tint.opacity(0.6)
 
-                // Stem line from sun edge up to knob
-                var stem = Path()
-                stem.move(to: CGPoint(x: center.x, y: center.y - sunRadius - 4))
-                stem.addLine(to: CGPoint(x: center.x, y: center.y - knobDistance))
-                context.stroke(stem, with: .color(Color.blue.opacity(alpha)),
-                    style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                // Orbit ring
+                let orbitRect = CGRect(
+                    x: center.x - orbitalRadius,
+                    y: center.y - orbitalRadius,
+                    width: orbitalRadius * 2,
+                    height: orbitalRadius * 2
+                )
+                context.stroke(
+                    Path(ellipseIn: orbitRect),
+                    with: .color(Color.blue.opacity(0.25)),
+                    style: StrokeStyle(lineWidth: 1, dash: [4, 3])
+                )
 
                 // Rays
                 for i in 0..<rayCount {
                     let angle = Double(i) * .pi * 2 / Double(rayCount)
                     let startR = sunRadius + 6
-                    let endR = startR + 5 + CGFloat(brightness) * 12
+                    let endR = startR + 12
 
                     var path = Path()
                     path.move(to: CGPoint(
@@ -50,8 +54,8 @@ struct LightSourceView: View {
             Circle()
                 .fill(.white)
                 .frame(width: sunRadius * 2, height: sunRadius * 2)
-                .shadow(color: .white.opacity(0.5 + brightness * 0.5), radius: 6 + CGFloat(brightness) * 8)
-                .shadow(color: .yellow.opacity(0.15 + brightness * 0.25), radius: 10 + CGFloat(brightness) * 14)
+                .shadow(color: .white.opacity(0.7), radius: 10)
+                .shadow(color: .yellow.opacity(0.3), radius: 18)
                 .overlay(
                     Circle()
                         .stroke(Color.gray.opacity(0.35), lineWidth: 1)

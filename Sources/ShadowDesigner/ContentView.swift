@@ -5,12 +5,11 @@ import HappyShadows
 struct ContentView: View {
     @State private var model = ShadowModel()
     @State private var showCopied = false
-    @State private var knobDragStart: Double? = nil
 
     var body: some View {
         VStack(spacing: 16) {
             shadowCanvas
-            themeToggle
+            controlsRow
             codePreview
             bottomBar
         }
@@ -29,41 +28,25 @@ struct ContentView: View {
                 y: center.y + model.lightOffset.height
             )
             let knobPos = CGPoint(
-                x: lightPos.x,
-                y: lightPos.y - model.knobDistance
+                x: lightPos.x + cos(model.knobAngle) * model.knobDistance,
+                y: lightPos.y + sin(model.knobAngle) * model.knobDistance
             )
 
             ZStack {
-                // Canvas background
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(model.backgroundColor)
                     .animation(.easeInOut(duration: 0.25), value: model.isDarkBackground)
 
-                // Preview card with live shadow
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(model.cardColor)
-                    .animation(.easeInOut(duration: 0.25), value: model.isDarkBackground)
-                    .frame(width: 180, height: 220)
-                    .compositingGroup()
-                    .happyShadow(
-                        color: model.shadowColor,
-                        radius: model.shadowRadius,
-                        opacity: model.shadowOpacity,
-                        x: model.shadowX,
-                        y: model.shadowY
-                    )
+                previewCard
                     .position(center)
                     .allowsHitTesting(false)
 
-                // Rays + stem (visual only)
                 LightSourceView(
-                    brightness: Double(model.brightness) / 100,
-                    knobDistance: model.knobDistance,
-                    tint: model.shadowColor
+                    orbitalRadius: model.knobDistance,
+                    tint: model.isGradient ? model.gradientColors.last! : model.shadowColor
                 )
                 .position(lightPos)
 
-                // Canvas drag area — moves the light source
                 Color.clear
                     .contentShape(Rectangle())
                     .gesture(
@@ -78,9 +61,8 @@ struct ContentView: View {
                             }
                     )
 
-                // Brightness knob — drag vertically to adjust
                 Circle()
-                    .stroke(Color.blue.opacity(0.5 + model.brightnessValue * 0.5), lineWidth: 1.5)
+                    .stroke(Color.blue.opacity(0.7), lineWidth: 1.5)
                     .background(Circle().fill(Color.white.opacity(0.01)))
                     .frame(width: 12, height: 12)
                     .frame(width: 28, height: 28)
@@ -89,34 +71,28 @@ struct ContentView: View {
                     .gesture(
                         DragGesture(minimumDistance: 0)
                             .onChanged { value in
-                                if knobDragStart == nil {
-                                    knobDragStart = model.brightnessValue
-                                }
-                                let delta = Double(-value.translation.height) / 80
-                                model.brightnessValue = min(max(
-                                    (knobDragStart ?? 0.6) + delta, 0
-                                ), 1)
-                            }
-                            .onEnded { _ in
-                                knobDragStart = nil
+                                let dx = value.location.x - lightPos.x
+                                let dy = value.location.y - lightPos.y
+                                model.knobAngle = atan2(dy, dx)
+                                let dist = sqrt(dx * dx + dy * dy)
+                                model.knobDistance = min(max(dist, model.knobMinDistance), model.knobMaxDistance)
                             }
                     )
 
-                // Brightness badge
-                if model.brightness > 0 {
-                    let labelAbove = knobPos.y > 50
-                    Text("Brightness \(model.brightness)%")
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(Capsule().fill(Color.blue))
-                        .position(
-                            x: knobPos.x,
-                            y: knobPos.y + (labelAbove ? -20 : 20)
-                        )
-                        .allowsHitTesting(false)
+                VStack(spacing: 2) {
+                    Text(String(format: "Radius %.1f", model.shadowRadius))
+                    Text("Opacity \(model.brightness)%")
                 }
+                .font(.system(size: 10, weight: .medium, design: .rounded))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(Capsule().fill(Color.blue))
+                .position(
+                    x: knobPos.x,
+                    y: knobPos.y + (knobPos.y > 60 ? -26 : 26)
+                )
+                .allowsHitTesting(false)
             }
             .onHover { hovering in
                 if hovering {
@@ -129,11 +105,90 @@ struct ContentView: View {
         .frame(maxHeight: .infinity)
     }
 
-    // MARK: - Theme Toggle
+    // MARK: - Preview Card
 
-    private var themeToggle: some View {
-        HStack {
+    @ViewBuilder
+    private var previewCard: some View {
+        let card = RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .fill(model.cardColor)
+            .animation(.easeInOut(duration: 0.25), value: model.isDarkBackground)
+            .frame(width: 180, height: 220)
+            .compositingGroup()
+
+        if model.isGradient {
+            card.happyGradientShadow(
+                gradient: model.gradientForShadow,
+                opacity: model.shadowOpacity,
+                radius: model.shadowRadius,
+                x: model.shadowX,
+                y: model.shadowY
+            )
+        } else {
+            card.happyShadow(
+                color: model.shadowColor,
+                radius: model.shadowRadius,
+                opacity: model.shadowOpacity,
+                x: model.shadowX,
+                y: model.shadowY
+            )
+        }
+    }
+
+    // MARK: - Controls Row
+
+    private var controlsRow: some View {
+        HStack(spacing: 8) {
+            // Shadow type toggle
+            Picker("", selection: $model.isGradient) {
+                Text("Solid").tag(false)
+                Text("Gradient").tag(true)
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 130)
+
+            // Color swatches
+            if model.isGradient {
+                ForEach(model.gradientColors.indices, id: \.self) { i in
+                    roundColorPicker(color: $model.gradientColors[i])
+                }
+
+                // Add color
+                Button { model.addColor() } label: {
+                    Circle()
+                        .strokeBorder(Color.secondary.opacity(0.4), style: StrokeStyle(lineWidth: 1.5, dash: [3, 2]))
+                        .frame(width: 24, height: 24)
+                        .overlay(
+                            Image(systemName: "plus")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(.secondary)
+                        )
+                }
+                .buttonStyle(.plain)
+
+                // Remove last color (only if > 2)
+                if model.gradientColors.count > 2 {
+                    Button { model.removeLastColor() } label: {
+                        Circle()
+                            .strokeBorder(Color.secondary.opacity(0.4), style: StrokeStyle(lineWidth: 1.5, dash: [3, 2]))
+                            .frame(width: 24, height: 24)
+                            .overlay(
+                                Image(systemName: "minus")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundStyle(.secondary)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            } else {
+                roundColorPicker(color: $model.gradientColors[0])
+                Text(model.colorName)
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .foregroundStyle(.secondary)
+            }
+
             Spacer()
+
+            // Theme toggle
             HStack(spacing: 2) {
                 backgroundDot(dark: false)
                 backgroundDot(dark: true)
@@ -141,7 +196,7 @@ struct ContentView: View {
             .padding(3)
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(Color(white: 0.88))
+                    .fill(model.buttonBgColor)
             )
         }
     }
@@ -156,8 +211,9 @@ struct ContentView: View {
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(Color(nsColor: .controlBackgroundColor))
+                    .fill(model.codeBgColor)
             )
+            .animation(.easeInOut(duration: 0.25), value: model.isDarkBackground)
             .onTapGesture {
                 model.copyCode()
                 flashCopied()
@@ -168,13 +224,8 @@ struct ContentView: View {
 
     private var bottomBar: some View {
         HStack(spacing: 12) {
-            // Color picker
-            ColorPicker("", selection: $model.shadowColor, supportsOpacity: false)
-                .labelsHidden()
-
             Spacer()
 
-            // Copy code button
             Button {
                 model.copyCode()
                 flashCopied()
@@ -185,7 +236,7 @@ struct ContentView: View {
                     .padding(.vertical, 8)
                     .background(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(Color(white: 0.88))
+                            .fill(model.buttonBgColor)
                     )
             }
             .buttonStyle(.plain)
@@ -194,6 +245,20 @@ struct ContentView: View {
     }
 
     // MARK: - Helpers
+
+    private func roundColorPicker(color: Binding<Color>) -> some View {
+        ZStack {
+            Circle()
+                .fill(color.wrappedValue)
+                .frame(width: 24, height: 24)
+                .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 1.5))
+
+            ColorPicker("", selection: color, supportsOpacity: false)
+                .labelsHidden()
+                .opacity(0.015)
+        }
+        .frame(width: 24, height: 24)
+    }
 
     private func backgroundDot(dark: Bool) -> some View {
         Circle()
