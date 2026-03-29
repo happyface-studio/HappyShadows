@@ -22,15 +22,15 @@ struct ComparisonImageView: View {
             
             // Pro Shadow
             VStack(spacing: 24) {
-                demoCard(title: "Pro Shadow")
+                demoCard(title: "Happy Shadow")
                     .compositingGroup()
-                    .proShadow(
+                    .happyShadow(
                         color: .black.opacity(0.25),
                         radius: 32,
                         y: 4
                     )
                 
-                Text("Pro Shadow. Realistic shadow with natural falloff and better control on lighting")
+                Text("Happy Shadow. Realistic shadow with natural falloff and better control on lighting")
                     .font(.system(.body, design: .monospaced))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)

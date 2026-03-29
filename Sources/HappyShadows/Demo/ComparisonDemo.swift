@@ -63,14 +63,14 @@ struct ComparisonDemo: View {
     }
     
     private var softShadowCard: some View {
-        Text(".proShadow(...)")
+        Text(".happyShadow(...)")
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             .background {
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .fill(.white)
             }
             .compositingGroup()
-            .proShadow(
+            .happyShadow(
                 color: color,
                 radius: shadowRadius,
                 x: xOffset,
@@ -79,13 +79,13 @@ struct ComparisonDemo: View {
     }
     
     private var gradientShadowCard: some View {
-        Text(".proGradientShadow(...)")
+        Text(".happyGradientShadow(...)")
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             .background {
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .fill(Color.white)
             }
-            .proGradientShadow(
+            .happyGradientShadow(
                 gradient: .linearGradient(
                     colors: [Color.blue, Color.pink, Color.orange],
                     startPoint: .top,

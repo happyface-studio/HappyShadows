@@ -35,7 +35,7 @@ struct ElevationDemo: View {
                     .fill(.white)
             }
             .compositingGroup()
-            .proShadow(
+            .happyShadow(
                 color: color,
                 elevation: CGFloat(elevation)
             )

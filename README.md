@@ -29,12 +29,12 @@ import HappyShadows
 
 ## Basic Shadows
 
-Replace your existing shadows with professional ones in one step. Just swap `.shadow()` with `.proShadow()`.
+Replace your existing shadows with professional ones in one step. Just swap `.shadow()` with `.happyShadow()`.
 
 ![Cover Image](/Tests/HappyShadowsTests/Exports/comparison.png)
 
 ```swift
-view.proShadow(
+view.happyShadow(
     color: .black.opacity(0.2), // Subtle shadow color
     radius: 12, // Medium blur for depth
     opacity: 0.25, // Standard opacity
@@ -51,9 +51,9 @@ Create consistent shadows across your app using elevation levels. Higher elevati
 
 ```swift
 // Quick elevation presets
-view.proShadow(elevation: 4) // Subtle elevation (buttons, cards)
-view.proShadow(elevation: 8) // Medium elevation (floating elements)
-view.proShadow(elevation: 16) // High elevation (modals, popovers)
+view.happyShadow(elevation: 4) // Subtle elevation (buttons, cards)
+view.happyShadow(elevation: 8) // Medium elevation (floating elements)
+view.happyShadow(elevation: 16) // High elevation (modals, popovers)
 ```
 
 ## Gradient Shadows
@@ -63,7 +63,7 @@ Add depth with beautiful gradient shadows. Perfect for creative UI elements and 
 ![Cover Image](/Tests/HappyShadowsTests/Exports/gradients.png)
 
 ```swift
-view.proGradientShadow(
+view.happyGradientShadow(
     gradient: .linearGradient(
         colors: [.blue, .purple],
         startPoint: .topLeading,
@@ -92,7 +92,7 @@ struct ShadowCard: View {
         .padding(20)
         .background(Color.white)
         .cornerRadius(16)
-        .proShadow(
+        .happyShadow(
             color: .black.opacity(0.2),
             radius: 12,
             opacity: 0.25,

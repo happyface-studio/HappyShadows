@@ -14,7 +14,7 @@ import SwiftUI
 /// Text("Hello")
 ///     .padding()
 ///     .background(Color.white)
-///     .softShadow(
+///     .happyShadow(
 ///         color: .black,
 ///         radius: 8,
 ///         opacity: 0.25,
@@ -63,7 +63,6 @@ public struct SoftShadow: ViewModifier {
         content
             // Layer 1: Tight shadow
             .modifier(InnerShadowLayer(
-                content: content,
                 color: color,
                 radius: dynamicRadius(radius / 16),
                 opacity: opacity,
@@ -72,7 +71,6 @@ public struct SoftShadow: ViewModifier {
             ))
             // Layer 2: Medium shadow
             .modifier(InnerShadowLayer(
-                content: content,
                 color: color,
                 radius: dynamicRadius(radius / 8),
                 opacity: opacity,
@@ -81,7 +79,6 @@ public struct SoftShadow: ViewModifier {
             ))
             // Layer 3: Wide shadow
             .modifier(InnerShadowLayer(
-                content: content,
                 color: color,
                 radius: dynamicRadius(radius / 4),
                 opacity: opacity,
@@ -90,7 +87,6 @@ public struct SoftShadow: ViewModifier {
             ))
             // Layer 4: Broader shadow
             .modifier(InnerShadowLayer(
-                content: content,
                 color: color,
                 radius: dynamicRadius(radius / 2),
                 opacity: opacity,
@@ -99,7 +95,6 @@ public struct SoftShadow: ViewModifier {
             ))
             // Layer 5: Broadest shadow
             .modifier(InnerShadowLayer(
-                content: content,
                 color: color,
                 radius: dynamicRadius(radius),
                 opacity: opacity,
@@ -110,15 +105,12 @@ public struct SoftShadow: ViewModifier {
 
     /// A single layer of the soft shadow effect.
     private struct InnerShadowLayer: ViewModifier {
-        let content: Any
         let color: Color
         let radius: CGFloat
         let opacity: Double
         let xOffset: CGFloat
         let yOffset: CGFloat
-        
-        private let additionalBlur: CGFloat = 2
-        
+
         /// Calculates the final y-offset including dynamic adjustments.
         private var calculatedYOffset: CGFloat {
             yOffset + ((yOffset >= 0 ? 1 : -1) * radius) + ShadowConstants.additionalBlur

@@ -27,7 +27,7 @@ struct ElevationImageView: View {
             .background(Color.white)
             .cornerRadius(32)
             .compositingGroup()
-            .proShadow(
+            .happyShadow(
                 color: Color.black.opacity(0.2),
                 elevation: CGFloat(elevation)
             )

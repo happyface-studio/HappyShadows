@@ -61,7 +61,7 @@ struct CoverImageView: View {
             .fill(Color.white)
             .frame(width: 280, height: 400)
             .compositingGroup()
-            .proShadow(
+            .happyShadow(
                 color: .black.opacity(0.15),
                 radius: 32,
                 y: 8

@@ -15,7 +15,7 @@ public extension View {
     ///
     /// ```swift
     /// Text("Hello World")
-    ///     .proShadow(
+    ///     .happyShadow(
     ///         color: .black,
     ///         radius: 8,
     ///         opacity: 0.25,
@@ -31,10 +31,10 @@ public extension View {
     ///   - x: The horizontal offset of the shadow. Positive values move right, negative left. Defaults to 0.
     ///   - y: The vertical offset of the shadow. Positive values move down, negative up. Defaults to 0.
     /// - Returns: A view with the soft shadow effect applied.
-    func proShadow(
+    func happyShadow(
         color: Color = .black,
         radius: CGFloat = 0,
-        opacity: CGFloat = 0.2,
+        opacity: Double = 0.25,
         x: CGFloat = 0,
         y: CGFloat = 0
     ) -> some View {
@@ -57,8 +57,8 @@ public extension View {
     ///
     /// ```swift
     /// VStack {
-    ///     Text("Card 1").proShadow(elevation: 2)
-    ///     Text("Card 2").proShadow(elevation: 8)
+    ///     Text("Card 1").happyShadow(elevation: 2)
+    ///     Text("Card 2").happyShadow(elevation: 8)
     /// }
     /// ```
     ///
@@ -69,10 +69,10 @@ public extension View {
     ///   - x: Additional horizontal offset. Defaults to 0.
     ///   - y: Additional vertical offset. Defaults to 0.
     /// - Returns: A view with elevation-based shadow applied.
-    func proShadow(
+    func happyShadow(
         color: Color = .black,
         elevation: CGFloat = 4,
-        opacity: CGFloat = 0.25,
+        opacity: Double = 0.25,
         x: CGFloat = 0,
         y: CGFloat = 0
     ) -> some View {
@@ -94,7 +94,7 @@ public extension View {
     ///
     /// ```swift
     /// Text("Gradient Shadow")
-    ///     .gradientShadow(
+    ///     .happyGradientShadow(
     ///         gradient: LinearGradient(
     ///             colors: [.blue, .purple],
     ///             startPoint: .topLeading,
@@ -112,13 +112,13 @@ public extension View {
     ///   - x: Horizontal offset of the shadow.
     ///   - y: Vertical offset of the shadow.
     /// - Returns: A view with the gradient shadow effect applied.
-    func proGradientShadow<G: GradientStyle>(
+    func happyGradientShadow<G: GradientStyle>(
         gradient: G = LinearGradient(
             colors: [.red, .blue],
             startPoint: .top,
             endPoint: .bottom
         ),
-        opacity: CGFloat = 0.25,
+        opacity: Double = 0.25,
         radius: CGFloat = 8,
         x: CGFloat = 0,
         y: CGFloat = 0

@@ -34,7 +34,7 @@ struct GradientShowcaseView: View {
             .background(Color.white)
             .cornerRadius(32)
             .compositingGroup()
-            .proGradientShadow(
+            .happyGradientShadow(
                 gradient: .linearGradient(
                     colors: colors,
                     startPoint: .topLeading,
