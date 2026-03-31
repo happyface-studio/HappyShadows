@@ -26,7 +26,9 @@ let package = Package(
         ),
         .executableTarget(
             name: "ShadowDesigner",
-            dependencies: ["HappyShadows"]
+            dependencies: ["HappyShadows"],
+            path: "ShadowDesigner",
+            exclude: ["Assets.xcassets", "ShadowDesigner.xcodeproj", "ShadowDesigner.entitlements", "project.yml", "generate-icon.swift"]
         ),
         .testTarget(
             name: "HappyShadowsTests",

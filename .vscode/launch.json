@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:HappyShadows}",
+            "name": "Debug ShadowDesigner",
+            "target": "ShadowDesigner",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug ShadowDesigner"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:HappyShadows}",
+            "name": "Release ShadowDesigner",
+            "target": "ShadowDesigner",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release ShadowDesigner"
+        }
+    ]
+}

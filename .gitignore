@@ -92,7 +92,6 @@ iOSInjectionProject/
 
 .DS_Store
 /.build
-/Packages
 /*.xcodeproj
 xcuserdata/
 DerivedData/
@@ -102,3 +101,12 @@ DerivedData/
 
 # Marketing assets
 /Tests/Artifacts/
+
+# Node / pnpm
+node_modules/
+pnpm-debug.log*
+
+# Build outputs (TypeScript, Vite, esbuild)
+packages/shadow-core/dist/
+packages/web/dist/
+packages/figma-plugin/dist/
