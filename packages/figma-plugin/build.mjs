@@ -44,7 +44,13 @@ async function build() {
   font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   color: var(--text);
 }
-body { background: var(--bg); padding: 12px; }
+.figma-light {
+  --bg: #ffffff; --surface: #f7f7f7; --surface-2: #f0f0f0;
+  --border: rgba(0,0,0,0.08); --text: #1a1a1a; --text-dim: #888;
+}
+body { background: var(--bg); overflow: hidden; }
+@keyframes checkDraw { from { stroke-dashoffset: 12; } to { stroke-dashoffset: 0; } }
+@keyframes checkPop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 </style>
 </head>
 <body>

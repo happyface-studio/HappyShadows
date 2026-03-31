@@ -1,7 +1,7 @@
 /// <reference types="@figma/plugin-typings" />
 import type { PluginMessage, UIMessage } from "./messages";
 
-figma.showUI(__html__, { width: 420, height: 720, themeColors: true });
+figma.showUI(__html__, { width: 420, height: 620, themeColors: true });
 
 // Notify UI of selection count on start and on change
 function sendSelection() {
