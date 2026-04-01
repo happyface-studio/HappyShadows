@@ -339,7 +339,7 @@ function App() {
             lineHeight: "14px",
           }}
         >
-          R {shadowRadius.toFixed(1)} &middot; {brightness}%
+          {`R ${shadowRadius.toFixed(1)} \u00b7 ${brightness}%`}
         </div>
       </div>
 
@@ -369,7 +369,6 @@ function App() {
               );
             })}
           </div>
-
           {(state.isGradient ? state.colors : [state.colors[0]]).map((c, i) => (
             <label key={i} style={{ position: "relative", cursor: "pointer" }}>
               <div
@@ -395,28 +394,15 @@ function App() {
               />
             </label>
           ))}
-
           {state.isGradient && (
             <>
-              <button
-                onClick={() => setState((s) => ({ ...s, colors: [...s.colors, "#3B82F6"] }))}
-                style={circleBtn}
-              >
-                +
-              </button>
+              <button onClick={() => setState((s) => ({ ...s, colors: [...s.colors, "#3B82F6"] }))} style={circleBtn}>+</button>
               {state.colors.length > 2 && (
-                <button
-                  onClick={() => setState((s) => ({ ...s, colors: s.colors.slice(0, -1) }))}
-                  style={circleBtn}
-                >
-                  −
-                </button>
+                <button onClick={() => setState((s) => ({ ...s, colors: s.colors.slice(0, -1) }))} style={circleBtn}>−</button>
               )}
             </>
           )}
-
           <div style={{ flex: 1 }} />
-
           <div style={{ display: "flex", gap: 2, padding: 2, borderRadius: 12, background: "var(--surface-2)" }}>
             {[false, true].map((dark) => (
               <div
