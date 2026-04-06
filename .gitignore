@@ -110,3 +110,5 @@ pnpm-debug.log*
 packages/shadow-core/dist/
 packages/web/dist/
 packages/figma-plugin/dist/
+packages/framer-plugin/dist/
+.firecrawl/

@@ -3,6 +3,7 @@
   "scripts": {
     "build": "pnpm -r build",
     "dev:web": "pnpm --filter web dev",
-    "dev:figma": "pnpm --filter figma-plugin dev"
+    "dev:figma": "pnpm --filter figma-plugin dev",
+    "dev:framer": "pnpm --filter framer-plugin dev"
   }
 }
