@@ -6,5 +6,8 @@
     "dev:web": "pnpm --filter web dev",
     "dev:figma": "pnpm --filter figma-plugin dev",
     "dev:framer": "pnpm --filter framer-plugin dev"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
   }
 }
