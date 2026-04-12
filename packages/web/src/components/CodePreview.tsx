@@ -45,8 +45,40 @@ export function CodePreview({ cssCode, tailwindCode, swiftCode }: Props) {
 
         <div style={{ flex: 1 }} />
 
-        <button onClick={copy} style={copyBtn}>
-          {copied ? "Copied!" : "Copy"}
+        <button
+          onClick={copy}
+          style={{
+            ...copyBtn,
+            background: copied ? "var(--accent)" : "var(--surface-2)",
+            color: copied ? "#fff" : "var(--text-dim)",
+            borderColor: copied ? "var(--accent)" : "var(--border)",
+          }}
+        >
+          {copied ? (
+            <>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 12 12"
+                fill="none"
+                style={{ animation: "checkPop 0.3s ease-out" }}
+              >
+                <path
+                  d="M2 6.5L4.5 9L10 3"
+                  stroke="currentColor"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeDasharray="12"
+                  strokeDashoffset="0"
+                  style={{ animation: "checkDraw 0.3s ease-out" }}
+                />
+              </svg>
+              Copied
+            </>
+          ) : (
+            "Copy"
+          )}
         </button>
       </div>
 
@@ -82,4 +114,8 @@ const copyBtn: React.CSSProperties = {
   cursor: "pointer",
   background: "var(--surface-2)",
   color: "var(--text-dim)",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  lineHeight: 1,
 };

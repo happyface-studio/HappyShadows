@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useState } from "react";
 import type { ShadowState } from "../hooks/useShadowState";
 
 interface Props {
@@ -25,7 +25,8 @@ export function ShadowCanvas({
   knobMax,
 }: Props) {
   const canvasRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef<"light" | "knob" | null>(null);
+  const dragRef = useRef<"light" | "knob" | null>(null);
+  const [dragging, setDragging] = useState(false);
 
   const getCenter = useCallback(() => {
     if (!canvasRef.current) return { x: 0, y: 0 };
@@ -38,18 +39,19 @@ export function ShadowCanvas({
       e.stopPropagation();
       e.preventDefault();
       (e.target as HTMLElement).setPointerCapture(e.pointerId);
-      dragging.current = target;
+      dragRef.current = target;
+      setDragging(true);
     },
     []
   );
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
-      if (!dragging.current || !canvasRef.current) return;
+      if (!dragRef.current || !canvasRef.current) return;
       const rect = canvasRef.current.getBoundingClientRect();
       const center = getCenter();
 
-      if (dragging.current === "light") {
+      if (dragRef.current === "light") {
         const x = Math.min(Math.max(e.clientX - rect.left, 30), rect.width - 30);
         const y = Math.min(Math.max(e.clientY - rect.top, 30), CANVAS_H - 30);
         setState((s) => ({ ...s, lightX: x - center.x, lightY: y - center.y }));
@@ -70,7 +72,8 @@ export function ShadowCanvas({
   );
 
   const handlePointerUp = useCallback(() => {
-    dragging.current = null;
+    dragRef.current = null;
+    setDragging(false);
   }, []);
 
   const center = getCenter();
@@ -83,6 +86,12 @@ export function ShadowCanvas({
   const bg = state.isDark ? "#262626" : "#ededed";
   const cardBg = state.isDark ? "#383838" : "#ffffff";
   const brightness = Math.round((shadowOpacity / 0.4) * 100);
+  const b = brightness / 100;
+  const cursor = dragging ? "grabbing" : "grab";
+
+  // Sun halo — both layers scale with brightness so the user gets
+  // instant feedback as they drag the knob.
+  const sunShadow = `0 0 ${6 + b * 10}px ${2 + b * 4}px rgba(255,255,255,0.5), 0 0 ${12 + b * 16}px ${4 + b * 8}px rgba(255,200,50,${0.1 + b * 0.3})`;
 
   return (
     <div
@@ -116,7 +125,42 @@ export function ShadowCanvas({
         }}
       />
 
-      {/* Sun glow */}
+      {/* Sun rays — length + opacity scale with brightness */}
+      <svg
+        style={{
+          position: "absolute",
+          left: lightPos.x - 44,
+          top: lightPos.y - 44,
+          width: 88,
+          height: 88,
+          pointerEvents: "none",
+          zIndex: 4,
+        }}
+        viewBox="0 0 88 88"
+      >
+        {Array.from({ length: 8 }).map((_, i) => {
+          const angle = (i * Math.PI * 2) / 8;
+          const innerR = 20;
+          const outerR = 20 + 5 + b * 18;
+          return (
+            <line
+              key={i}
+              x1={44 + Math.cos(angle) * innerR}
+              y1={44 + Math.sin(angle) * innerR}
+              x2={44 + Math.cos(angle) * outerR}
+              y2={44 + Math.sin(angle) * outerR}
+              stroke="#4a90ff"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              opacity={0.3 + b * 0.5}
+            />
+          );
+        })}
+        {/* Sun circle outline */}
+        <circle cx="44" cy="44" r="15" fill="none" stroke="#4a90ff" strokeWidth="1.5" opacity="0.5" />
+      </svg>
+
+      {/* Sun fill — draggable, glow scales with brightness */}
       <div
         style={{
           position: "absolute",
@@ -126,64 +170,50 @@ export function ShadowCanvas({
           height: 24,
           borderRadius: "50%",
           background: "#fff",
-          boxShadow: "0 0 12px 4px rgba(255,255,255,0.5), 0 0 24px 8px rgba(255,200,50,0.25)",
+          boxShadow: sunShadow,
           border: "1px solid rgba(150,150,150,0.35)",
-          pointerEvents: "none",
+          cursor,
+          zIndex: 5,
         }}
+        onPointerDown={(e) => handlePointerDown(e, "light")}
       />
 
-      {/* Orbit ring */}
+      {/* Knob — small, subtle fill, no orbit ring */}
       <div
         style={{
           position: "absolute",
-          left: lightPos.x - state.knobDistance,
-          top: lightPos.y - state.knobDistance,
-          width: state.knobDistance * 2,
-          height: state.knobDistance * 2,
+          left: knobPos.x - 9,
+          top: knobPos.y - 9,
+          width: 18,
+          height: 18,
           borderRadius: "50%",
-          border: "1px dashed rgba(74,144,255,0.25)",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Knob */}
-      <div
-        style={{
-          position: "absolute",
-          left: knobPos.x - 10,
-          top: knobPos.y - 10,
-          width: 20,
-          height: 20,
-          borderRadius: "50%",
-          border: "1.5px solid rgba(74,144,255,0.7)",
-          cursor: "grab",
+          border: "1.5px solid #4a90ff",
+          background: "rgba(74,144,255,0.08)",
+          cursor,
           zIndex: 10,
         }}
         onPointerDown={(e) => handlePointerDown(e, "knob")}
       />
 
-      {/* Badge */}
+      {/* Badge — fixed in bottom-right corner */}
       <div
         style={{
           position: "absolute",
-          left: knobPos.x,
-          top: knobPos.y + (knobPos.y > 60 ? -32 : 28),
-          transform: "translateX(-50%)",
-          background: "var(--accent)",
+          right: 12,
+          bottom: 12,
+          background: "rgba(0,0,0,0.5)",
           color: "#fff",
-          fontSize: 10,
+          fontSize: 11,
           fontWeight: 600,
-          padding: "3px 10px",
-          borderRadius: 20,
+          padding: "4px 10px",
+          borderRadius: 8,
           whiteSpace: "nowrap",
           pointerEvents: "none",
           lineHeight: "16px",
-          textAlign: "center",
+          letterSpacing: "0.01em",
         }}
       >
-        Radius {shadowRadius.toFixed(1)}
-        <br />
-        Opacity {brightness}%
+        {`R ${shadowRadius.toFixed(1)} \u00b7 ${brightness}%`}
       </div>
     </div>
   );
