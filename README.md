@@ -10,7 +10,8 @@ Includes **ShadowDesigner**, a companion macOS app for visually designing shadow
 - Simple SwiftUI modifier API (`.happyShadow()`, `.happyGradientShadow()`)
 - Elevation-based shadow presets
 - Fully customizable shadow color, radius, opacity, and offset
-- Dynamic shadow adaptation based on offset
+- Physically-motivated layer model: contact, key (with penumbra falloff), and ambient shadows
+- Surface-tinted shadow colors via `Color.happyShadowTint(surfaceRed:green:blue:)`
 - Support for gradient shadows (linear, angular, radial, elliptical)
 - Works on iOS, macOS, tvOS, watchOS, and visionOS
 
