@@ -3,15 +3,15 @@ export type {
   ShadowLayer,
   ShadowParams,
   GradientShadowParams,
+  LayerSpec,
 } from "./layers.js";
 
 export {
+  V2_LAYER_SPECS,
   computeLayers,
   computeGradientLayers,
   computeBoxShadowLayers,
   computeBoxShadowGradientLayers,
-  computeFigmaLayers,
-  computeFigmaGradientLayers,
 } from "./layers.js";
 
 export {
