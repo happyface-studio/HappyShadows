@@ -12,7 +12,8 @@ cd "$ROOT"
 APP_NAME="ShadowDesigner"
 DMG_OUT="$ROOT/packages/web/public/${APP_NAME}.dmg"
 STAGING="$(mktemp -d)"
-trap 'rm -rf "$STAGING"' EXIT
+MOUNT_DIR=""
+trap 'if [ -n "$MOUNT_DIR" ]; then hdiutil detach "$MOUNT_DIR" >/dev/null 2>&1 || true; fi; rm -rf "$STAGING" "$MOUNT_DIR"' EXIT
 
 echo "==> Building universal release binary..."
 swift build -c release --arch arm64 --arch x86_64 --product "$APP_NAME"
@@ -54,9 +55,10 @@ hdiutil create -volname "$APP_NAME" -srcfolder "$STAGING" -ov -format UDZO "$DMG
 echo "==> Self-check: mount + detach..."
 test -f "$DMG_OUT" || { echo "ERROR: dmg not produced"; exit 1; }
 MOUNT_DIR="$(mktemp -d)"
-hdiutil attach "$DMG_OUT" -nobrowse -mountpoint "$MOUNT_DIR" >/dev/null
-test -d "$MOUNT_DIR/${APP_NAME}.app" || { echo "ERROR: .app missing inside dmg"; hdiutil detach "$MOUNT_DIR" >/dev/null; exit 1; }
+hdiutil attach "$DMG_OUT" -nobrowse -mountpoint "$MOUNT_DIR" >/dev/null || { echo "ERROR: failed to mount dmg"; exit 1; }
+test -d "$MOUNT_DIR/${APP_NAME}.app" || { echo "ERROR: .app missing inside dmg"; exit 1; }
 hdiutil detach "$MOUNT_DIR" >/dev/null
 rmdir "$MOUNT_DIR"
+MOUNT_DIR=""
 
 echo "==> Done: $DMG_OUT"
