@@ -2,6 +2,7 @@ import { Nav } from "./components/Nav";
 import { Footer } from "./components/Footer";
 import { Hero } from "./sections/Hero";
 import { HowItWorks } from "./sections/HowItWorks";
+import { Benefits } from "./sections/Benefits";
 
 export function App() {
   return (
@@ -10,6 +11,7 @@ export function App() {
       <main id="top">
         <Hero />
         <HowItWorks />
+        <Benefits />
       </main>
       <Footer />
     </>
