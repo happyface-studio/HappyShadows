@@ -53,86 +53,35 @@ public struct GradientShadow<G: GradientStyle>: ViewModifier {
         self.yOffset = yOffset
     }
 
-    /// Calculates a dynamic radius that adjusts based on the shadow's offset.
-    /// - Parameter baseRadius: The base radius to adjust.
-    /// - Returns: An adjusted radius that takes into account the shadow's offset.
-    private func dynamicRadius(_ baseRadius: CGFloat) -> CGFloat {
-        let offsetMagnitude = sqrt(pow(xOffset, 2) + pow(yOffset, 2))
-        let radiusMultiplier = max(1.0, 1.0 + (offsetMagnitude / 32) * 0.5)
-        return baseRadius * radiusMultiplier
-    }
-
     public func body(content: Content) -> some View {
-        content
-            // Layer 1: Tight shadow
-            .modifier(InnerShadowLayer(
-                gradient: gradient,
-                radius: dynamicRadius(radius / 16),
-                opacity: opacity,
-                xOffset: xOffset / 16,
-                yOffset: yOffset / 16
-            ))
-            // Layer 2: Medium shadow
-            .modifier(InnerShadowLayer(
-                gradient: gradient,
-                radius: dynamicRadius(radius / 8),
-                opacity: opacity,
-                xOffset: xOffset / 8,
-                yOffset: yOffset / 8
-            ))
-            // Layer 3: Wide shadow
-            .modifier(InnerShadowLayer(
-                gradient: gradient,
-                radius: dynamicRadius(radius / 4),
-                opacity: opacity,
-                xOffset: xOffset / 4,
-                yOffset: yOffset / 4
-            ))
-            // Layer 4: Broader shadow
-            .modifier(InnerShadowLayer(
-                gradient: gradient,
-                radius: dynamicRadius(radius / 2),
-                opacity: opacity,
-                xOffset: xOffset / 2,
-                yOffset: yOffset / 2
-            ))
-            // Layer 5: Broadest shadow
-            .modifier(InnerShadowLayer(
-                gradient: gradient,
-                radius: dynamicRadius(radius),
-                opacity: opacity,
-                xOffset: xOffset,
-                yOffset: yOffset
-            ))
+        let layers = ShadowLayerModel.computeLayers(
+            radius: radius, opacity: opacity, x: xOffset, y: yOffset
+        )
+        return content
+            .compositingGroup()
+            .modifier(GradientLayer(gradient: gradient, layer: layers[0]))
+            .modifier(GradientLayer(gradient: gradient, layer: layers[1]))
+            .modifier(GradientLayer(gradient: gradient, layer: layers[2]))
+            .modifier(GradientLayer(gradient: gradient, layer: layers[3]))
+            .modifier(GradientLayer(gradient: gradient, layer: layers[4]))
     }
 
     /// A single layer of the gradient shadow effect.
-    private struct InnerShadowLayer: ViewModifier {
+    private struct GradientLayer: ViewModifier {
         let gradient: G
-        let radius: CGFloat
-        let opacity: Double
-        let xOffset: CGFloat
-        let yOffset: CGFloat
-        
-        /// Calculates the final y-offset including dynamic adjustments.
-        private var calculatedYOffset: CGFloat {
-            yOffset + ((yOffset >= 0 ? 1 : -1) * radius) + ShadowConstants.additionalBlur
-        }
+        let layer: ResolvedShadowLayer
 
         func body(content: Content) -> some View {
             content
                 .background {
                     Rectangle()
                         .fill(gradient)
-                        .opacity(opacity)
+                        .opacity(layer.alpha)
                         .mask {
                             content
                         }
-                        .offset(
-                            x: xOffset,
-                            y: calculatedYOffset
-                        )
-                        .blur(radius: radius + ShadowConstants.additionalBlur)
+                        .offset(x: layer.offsetX, y: layer.offsetY)
+                        .blur(radius: layer.blurRadius)
                 }
         }
     }
