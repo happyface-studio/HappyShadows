@@ -115,3 +115,41 @@ export function generateGradientSwiftUI(params: GradientShadowParams): string {
     y: ${fmtSw(y)}
 )`;
 }
+
+// ---------------------------------------------------------------------------
+// Animated CSS (pseudo-element opacity crossfade)
+// ---------------------------------------------------------------------------
+
+/**
+ * Animatable elevation: animating box-shadow re-runs the Gaussian blur
+ * every frame. Instead, pre-render the elevated shadow (2× radius/offset)
+ * on ::after and crossfade its opacity — the blur is computed once.
+ */
+export function generateAnimatedCSS(params: ShadowParams): string {
+  const base = layersToBoxShadow(computeBoxShadowLayers(params));
+  const elevated = layersToBoxShadow(
+    computeBoxShadowLayers({ ...params, radius: params.radius * 2, x: params.x * 2, y: params.y * 2 })
+  );
+  return `/* Crossfades a pre-rendered elevated shadow instead of animating
+   box-shadow, so the blur never re-renders during the transition. */
+.happy-shadow {
+  position: relative;
+  box-shadow:
+    ${base};
+}
+.happy-shadow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  pointer-events: none;
+  box-shadow:
+    ${elevated};
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.happy-shadow:hover::after {
+  opacity: 1;
+}`;
+}

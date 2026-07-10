@@ -21,6 +21,7 @@ export {
   generateGradientTailwind,
   generateSwiftUI,
   generateGradientSwiftUI,
+  generateAnimatedCSS,
 } from "./codegen.js";
 
 export { tintShadowColor } from "./tint.js";
