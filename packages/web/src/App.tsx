@@ -4,6 +4,7 @@ import { Hero } from "./sections/Hero";
 import { HowItWorks } from "./sections/HowItWorks";
 import { Benefits } from "./sections/Benefits";
 import { EditorSection } from "./sections/EditorSection";
+import { Download } from "./sections/Download";
 
 export function App() {
   return (
@@ -14,6 +15,7 @@ export function App() {
         <HowItWorks />
         <Benefits />
         <EditorSection />
+        <Download />
       </main>
       <Footer />
     </>
