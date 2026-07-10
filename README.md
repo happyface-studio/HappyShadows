@@ -138,6 +138,30 @@ open ShadowDesigner/ShadowDesigner.xcodeproj
 
 Select the ShadowDesigner scheme and press Cmd+R.
 
+### Demo page
+
+A one-page demo/landing site lives in `packages/web` (Vite + React). It explains
+the layer model, shows the benefits for Swift and CSS, embeds the live editor,
+and offers the macOS app download.
+
+```bash
+pnpm -C packages/web dev     # local dev server
+pnpm -C packages/web build   # production build to packages/web/dist
+```
+
+### Building the downloadable .dmg
+
+The demo page's "Download for macOS" button serves `packages/web/public/ShadowDesigner.dmg`.
+Build it (universal arm64 + x86_64) with:
+
+```bash
+./Scripts/build-dmg.sh
+```
+
+The app is **unsigned** — on first launch, right-click it and choose **Open** to
+pass Gatekeeper. Run `build-dmg.sh` before `pnpm -C packages/web build` so the
+download is included.
+
 ## How It Works
 
 HappyShadows splits each shadow into 5 physically-motivated layers — a contact shadow, three key-light layers with penumbra falloff, and one ambient layer. Alpha weights sum to 1.0 so the combined intensity matches your `opacity` input:

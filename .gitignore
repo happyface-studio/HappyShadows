@@ -112,3 +112,6 @@ packages/web/dist/
 packages/figma-plugin/dist/
 packages/framer-plugin/dist/
 .firecrawl/
+
+# Generated macOS download (built by Scripts/build-dmg.sh)
+packages/web/public/ShadowDesigner.dmg
