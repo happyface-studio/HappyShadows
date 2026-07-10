@@ -9,6 +9,8 @@ import {
   generateGradientTailwind,
   generateSwiftUI,
   generateGradientSwiftUI,
+  tintShadowColor,
+  generateAnimatedCSS,
 } from "@happy-shadows/core";
 
 export interface ShadowState {
@@ -23,6 +25,9 @@ export interface ShadowState {
   colors: string[]; // hex strings
   isGradient: boolean;
   isDark: boolean;
+  // Tinted shadow: derive shadow color from the surface it falls on
+  isTinted: boolean;
+  surfaceColor: string; // hex
 }
 
 const KNOB_MIN = 22;
@@ -53,6 +58,8 @@ export function useShadowState() {
     colors: ["#000000", "#8B5CF6"],
     isGradient: false,
     isDark: true,
+    isTinted: false,
+    surfaceColor: "#e8e4dc",
   });
 
   const shadowX = -state.lightX * 0.09;
@@ -66,8 +73,12 @@ export function useShadowState() {
     [state.colors]
   );
 
+  const solidColor = state.isTinted
+    ? tintShadowColor(rgbaColors[0], hexToRgba(state.surfaceColor))
+    : rgbaColors[0];
+
   const solidParams: ShadowParams = {
-    color: rgbaColors[0],
+    color: solidColor,
     radius: shadowRadius,
     opacity: shadowOpacity,
     x: shadowX,
@@ -98,6 +109,9 @@ export function useShadowState() {
     ? generateGradientSwiftUI(gradientParams)
     : generateSwiftUI(solidParams);
 
+  // Solid-only: gradient shadows have no single-color animatable form
+  const animatedCssCode = state.isGradient ? null : generateAnimatedCSS(solidParams);
+
   // Convert layers to CSS box-shadow string for the live preview
   const previewBoxShadow = layers
     .map((l) => {
@@ -117,6 +131,7 @@ export function useShadowState() {
     shadowOpacity,
     previewBoxShadow,
     cssCode,
+    animatedCssCode,
     tailwindCode,
     swiftCode,
     knobMin: KNOB_MIN,

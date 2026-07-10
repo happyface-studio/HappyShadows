@@ -1,18 +1,30 @@
 import { useState } from "react";
 
-type Tab = "CSS" | "Tailwind" | "SwiftUI";
+type Tab = "CSS" | "CSS (animatable)" | "Tailwind" | "SwiftUI";
 
 interface Props {
   cssCode: string;
+  animatedCssCode: string | null;
   tailwindCode: string;
   swiftCode: string;
 }
 
-export function CodePreview({ cssCode, tailwindCode, swiftCode }: Props) {
+export function CodePreview({ cssCode, animatedCssCode, tailwindCode, swiftCode }: Props) {
   const [tab, setTab] = useState<Tab>("CSS");
   const [copied, setCopied] = useState(false);
 
-  const code = tab === "CSS" ? cssCode : tab === "Tailwind" ? tailwindCode : swiftCode;
+  const tabs: Tab[] = animatedCssCode
+    ? ["CSS", "CSS (animatable)", "Tailwind", "SwiftUI"]
+    : ["CSS", "Tailwind", "SwiftUI"];
+
+  const code =
+    tab === "CSS (animatable)" && animatedCssCode
+      ? animatedCssCode
+      : tab === "Tailwind"
+        ? tailwindCode
+        : tab === "SwiftUI"
+          ? swiftCode
+          : cssCode;
 
   const copy = () => {
     navigator.clipboard.writeText(code);
@@ -24,7 +36,7 @@ export function CodePreview({ cssCode, tailwindCode, swiftCode }: Props) {
     <div>
       {/* Tabs */}
       <div style={{ display: "flex", gap: 2, marginBottom: 8 }}>
-        {(["CSS", "Tailwind", "SwiftUI"] as Tab[]).map((t) => (
+        {tabs.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}

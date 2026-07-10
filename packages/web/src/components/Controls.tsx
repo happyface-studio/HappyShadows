@@ -101,6 +101,53 @@ export function Controls({ state, setState }: Props) {
         </>
       )}
 
+      {/* Tinted shadow: derive color from surface (solid mode only) */}
+      {!state.isGradient && (
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <button
+            onClick={() => setState((s) => ({ ...s, isTinted: !s.isTinted }))}
+            style={{
+              padding: "6px 14px",
+              fontSize: 12,
+              fontWeight: 600,
+              border: "1px solid var(--border)",
+              borderRadius: 8,
+              cursor: "pointer",
+              background: state.isTinted ? "var(--accent)" : "var(--surface)",
+              color: state.isTinted ? "#fff" : "var(--text-dim)",
+            }}
+          >
+            Tinted
+          </button>
+          {state.isTinted && (
+            <label style={{ position: "relative", cursor: "pointer" }} title="Surface color">
+              <div
+                style={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: 8,
+                  background: state.surfaceColor,
+                  border: "2px solid rgba(255,255,255,0.2)",
+                }}
+              />
+              <input
+                type="color"
+                value={state.surfaceColor}
+                onChange={(e) => setState((s) => ({ ...s, surfaceColor: e.target.value }))}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  opacity: 0,
+                  width: "100%",
+                  height: "100%",
+                  cursor: "pointer",
+                }}
+              />
+            </label>
+          )}
+        </div>
+      )}
+
       <div style={{ flex: 1 }} />
 
       {/* Theme toggle */}
