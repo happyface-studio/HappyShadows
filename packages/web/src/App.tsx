@@ -1,6 +1,7 @@
 import { Nav } from "./components/Nav";
 import { Footer } from "./components/Footer";
 import { Hero } from "./sections/Hero";
+import { HowItWorks } from "./sections/HowItWorks";
 
 export function App() {
   return (
@@ -8,6 +9,7 @@ export function App() {
       <Nav />
       <main id="top">
         <Hero />
+        <HowItWorks />
       </main>
       <Footer />
     </>
