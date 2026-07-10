@@ -18,6 +18,7 @@ test("emits the pseudo-element opacity-crossfade pattern", () => {
   assert.ok(css.includes("transition: opacity"), "opacity transition");
   assert.ok(css.includes("opacity: 0;"), "hidden at rest");
   assert.ok(!css.includes("transition: box-shadow"), "never animates box-shadow");
+  assert.ok(css.includes("isolation: isolate;"), "creates its own stacking context");
 });
 
 test("base shadow matches generateCSS layers; ::after holds the 2× elevated variant", () => {

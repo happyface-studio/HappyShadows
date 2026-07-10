@@ -134,6 +134,7 @@ export function generateAnimatedCSS(params: ShadowParams): string {
    box-shadow, so the blur never re-renders during the transition. */
 .happy-shadow {
   position: relative;
+  isolation: isolate;
   box-shadow:
     ${base};
 }

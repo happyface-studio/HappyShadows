@@ -65,8 +65,10 @@ tintShadowColor(shadow: RGBAColor, surface: RGBAColor): RGBAColor
 Convert `surface` to HSL; keep hue, saturation × 1.2 (clamped to 1),
 lightness × 0.25; return with `shadow`'s alpha.
 
-- Opt-in: "Tinted" toggle + surface color picker in the designer UIs
-  (web, Figma plugin, Framer plugin, ShadowDesigner).
+- Opt-in: "Tinted" toggle + surface color picker in the designer UIs.
+  Shipped in the web app in this plan; the Figma plugin, Framer plugin,
+  and ShadowDesigner pickers are deferred to a follow-up plan (the engine
+  itself reaches all targets through shared code).
 - Codegen bakes the resulting color into output — zero runtime cost.
 
 ## 3. Performance
