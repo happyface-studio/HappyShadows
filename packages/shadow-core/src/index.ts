@@ -22,3 +22,5 @@ export {
   generateSwiftUI,
   generateGradientSwiftUI,
 } from "./codegen.js";
+
+export { tintShadowColor } from "./tint.js";
