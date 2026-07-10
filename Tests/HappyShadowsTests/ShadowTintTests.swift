@@ -5,6 +5,7 @@ final class ShadowTintTests: XCTestCase {
     private struct TintFixture: Decodable {
         struct RGB: Decodable { let r: Double; let g: Double; let b: Double }
         struct Expected: Decodable { let r: Double; let g: Double; let b: Double; let a: Double }
+        let name: String
         let surface: RGB
         let expected: Expected
     }
@@ -13,16 +14,19 @@ final class ShadowTintTests: XCTestCase {
         let url = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .appendingPathComponent("Fixtures/v2-layers.json")
-        struct Root: Decodable { let tint: TintFixture }
-        let fixture = try JSONDecoder().decode(Root.self, from: Data(contentsOf: url)).tint
-        let out = HappyShadowTint.components(
-            surfaceRed: fixture.surface.r,
-            green: fixture.surface.g,
-            blue: fixture.surface.b
-        )
-        XCTAssertEqual(out.r, fixture.expected.r, accuracy: 1e-6)
-        XCTAssertEqual(out.g, fixture.expected.g, accuracy: 1e-6)
-        XCTAssertEqual(out.b, fixture.expected.b, accuracy: 1e-6)
+        struct Root: Decodable { let tints: [TintFixture] }
+        let fixtures = try JSONDecoder().decode(Root.self, from: Data(contentsOf: url)).tints
+        XCTAssertFalse(fixtures.isEmpty)
+        for fixture in fixtures {
+            let out = HappyShadowTint.components(
+                surfaceRed: fixture.surface.r,
+                green: fixture.surface.g,
+                blue: fixture.surface.b
+            )
+            XCTAssertEqual(out.r, fixture.expected.r, accuracy: 1e-6, fixture.name)
+            XCTAssertEqual(out.g, fixture.expected.g, accuracy: 1e-6, fixture.name)
+            XCTAssertEqual(out.b, fixture.expected.b, accuracy: 1e-6, fixture.name)
+        }
     }
 
     func testGraySurfaceStaysGray() {

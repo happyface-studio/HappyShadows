@@ -12,13 +12,14 @@ const fixture = JSON.parse(
 
 const close = (a, b, msg) => assert.ok(Math.abs(a - b) < 1e-6, `${msg}: ${a} !== ${b}`);
 
-test("matches the shared fixture", () => {
-  const { surface, shadowAlpha, expected } = fixture.tint;
-  const out = tintShadowColor({ r: 0, g: 0, b: 0, a: shadowAlpha }, { ...surface, a: 1 });
-  close(out.r, expected.r, "r");
-  close(out.g, expected.g, "g");
-  close(out.b, expected.b, "b");
-  close(out.a, expected.a, "a");
+test("matches every tint case in the shared fixture", () => {
+  for (const { name, surface, shadowAlpha, expected } of fixture.tints) {
+    const out = tintShadowColor({ r: 0, g: 0, b: 0, a: shadowAlpha }, { ...surface, a: 1 });
+    close(out.r, expected.r, `${name} r`);
+    close(out.g, expected.g, `${name} g`);
+    close(out.b, expected.b, `${name} b`);
+    close(out.a, expected.a, `${name} a`);
+  }
 });
 
 test("preserves the shadow's alpha, not the surface's", () => {

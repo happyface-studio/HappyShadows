@@ -17,12 +17,15 @@ export function CodePreview({ cssCode, animatedCssCode, tailwindCode, swiftCode 
     ? ["CSS", "CSS (animatable)", "Tailwind", "SwiftUI"]
     : ["CSS", "Tailwind", "SwiftUI"];
 
+  // If the selected tab disappeared (animatable is solid-only), fall back to CSS
+  const activeTab: Tab = tabs.includes(tab) ? tab : "CSS";
+
   const code =
-    tab === "CSS (animatable)" && animatedCssCode
+    activeTab === "CSS (animatable)" && animatedCssCode
       ? animatedCssCode
-      : tab === "Tailwind"
+      : activeTab === "Tailwind"
         ? tailwindCode
-        : tab === "SwiftUI"
+        : activeTab === "SwiftUI"
           ? swiftCode
           : cssCode;
 
@@ -47,8 +50,8 @@ export function CodePreview({ cssCode, animatedCssCode, tailwindCode, swiftCode 
               border: "none",
               borderRadius: 6,
               cursor: "pointer",
-              background: tab === t ? "var(--accent)" : "var(--surface-2)",
-              color: tab === t ? "#fff" : "var(--text-dim)",
+              background: activeTab === t ? "var(--accent)" : "var(--surface-2)",
+              color: activeTab === t ? "#fff" : "var(--text-dim)",
             }}
           >
             {t}
