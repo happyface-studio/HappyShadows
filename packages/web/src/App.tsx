@@ -5,6 +5,7 @@ import { HowItWorks } from "./sections/HowItWorks";
 import { Benefits } from "./sections/Benefits";
 import { EditorSection } from "./sections/EditorSection";
 import { Download } from "./sections/Download";
+import { Docs } from "./sections/Docs";
 
 export function App() {
   return (
@@ -16,6 +17,7 @@ export function App() {
         <Benefits />
         <EditorSection />
         <Download />
+        <Docs />
       </main>
       <Footer />
     </>
