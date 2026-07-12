@@ -11,6 +11,7 @@ export function App() {
     shadowOpacity,
     previewBoxShadow,
     cssCode,
+    animatedCssCode,
     tailwindCode,
     swiftCode,
     knobMin,
@@ -43,6 +44,7 @@ export function App() {
 
       <CodePreview
         cssCode={cssCode}
+        animatedCssCode={animatedCssCode}
         tailwindCode={tailwindCode}
         swiftCode={swiftCode}
       />

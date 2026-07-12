@@ -1,18 +1,33 @@
 import { useState } from "react";
 
-type Tab = "CSS" | "Tailwind" | "SwiftUI";
+type Tab = "CSS" | "CSS (animatable)" | "Tailwind" | "SwiftUI";
 
 interface Props {
   cssCode: string;
+  animatedCssCode: string | null;
   tailwindCode: string;
   swiftCode: string;
 }
 
-export function CodePreview({ cssCode, tailwindCode, swiftCode }: Props) {
+export function CodePreview({ cssCode, animatedCssCode, tailwindCode, swiftCode }: Props) {
   const [tab, setTab] = useState<Tab>("CSS");
   const [copied, setCopied] = useState(false);
 
-  const code = tab === "CSS" ? cssCode : tab === "Tailwind" ? tailwindCode : swiftCode;
+  const tabs: Tab[] = animatedCssCode
+    ? ["CSS", "CSS (animatable)", "Tailwind", "SwiftUI"]
+    : ["CSS", "Tailwind", "SwiftUI"];
+
+  // If the selected tab disappeared (animatable is solid-only), fall back to CSS
+  const activeTab: Tab = tabs.includes(tab) ? tab : "CSS";
+
+  const code =
+    activeTab === "CSS (animatable)" && animatedCssCode
+      ? animatedCssCode
+      : activeTab === "Tailwind"
+        ? tailwindCode
+        : activeTab === "SwiftUI"
+          ? swiftCode
+          : cssCode;
 
   const copy = () => {
     navigator.clipboard.writeText(code);
@@ -24,7 +39,7 @@ export function CodePreview({ cssCode, tailwindCode, swiftCode }: Props) {
     <div>
       {/* Tabs */}
       <div style={{ display: "flex", gap: 2, marginBottom: 8 }}>
-        {(["CSS", "Tailwind", "SwiftUI"] as Tab[]).map((t) => (
+        {tabs.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -35,8 +50,8 @@ export function CodePreview({ cssCode, tailwindCode, swiftCode }: Props) {
               border: "none",
               borderRadius: 6,
               cursor: "pointer",
-              background: tab === t ? "var(--accent)" : "var(--surface-2)",
-              color: tab === t ? "#fff" : "var(--text-dim)",
+              background: activeTab === t ? "var(--accent)" : "var(--surface-2)",
+              color: activeTab === t ? "#fff" : "var(--text-dim)",
             }}
           >
             {t}

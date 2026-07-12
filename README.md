@@ -10,7 +10,8 @@ Includes **ShadowDesigner**, a companion macOS app for visually designing shadow
 - Simple SwiftUI modifier API (`.happyShadow()`, `.happyGradientShadow()`)
 - Elevation-based shadow presets
 - Fully customizable shadow color, radius, opacity, and offset
-- Dynamic shadow adaptation based on offset
+- Physically-motivated layer model: contact, key (with penumbra falloff), and ambient shadows
+- Surface-tinted shadow colors via `Color.happyShadowTint(surfaceRed:green:blue:)`
 - Support for gradient shadows (linear, angular, radial, elliptical)
 - Works on iOS, macOS, tvOS, watchOS, and visionOS
 
@@ -139,15 +140,15 @@ Select the ShadowDesigner scheme and press Cmd+R.
 
 ## How It Works
 
-HappyShadows creates a more natural shadow effect by combining five shadow layers with different intensities and spreads:
+HappyShadows splits each shadow into 5 physically-motivated layers — a contact shadow, three key-light layers with penumbra falloff, and one ambient layer. Alpha weights sum to 1.0 so the combined intensity matches your `opacity` input:
 
-1. **Tight shadow** (1/16 of the base values)
-2. **Medium shadow** (1/8 of the base values)
-3. **Wide shadow** (1/4 of the base values)
-4. **Broader shadow** (1/2 of the base values)
-5. **Broadest shadow** (full base values)
-
-This layered approach better mimics how shadows appear in the physical world, compared to SwiftUI's single-layer `.shadow()` modifier.
+| Layer   | Offset         | Blur      | Share of opacity |
+|---------|----------------|-----------|------------------|
+| Contact | 0.12 × (x, y)  | 0.25R + 1 | 35%              |
+| Key 1   | 0.40 × (x, y)  | 0.60R     | 25%              |
+| Key 2   | 0.70 × (x, y)  | 1.20R     | 15%              |
+| Key 3   | 1.00 × (x, y)  | 2.00R     | 10%              |
+| Ambient | (0, 0.15y)     | 3.00R     | 15%              |
 
 ## Platform Support
 

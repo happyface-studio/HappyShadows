@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import HappyShadows
 
 @Observable
 final class ShadowModel {
@@ -10,6 +11,13 @@ final class ShadowModel {
     var isGradient = false
     var isDarkBackground = false
 
+    // MARK: - Tinted shadow (solid mode only)
+
+    var isTinted = false
+    var surfaceRed: Double = 0.91
+    var surfaceGreen: Double = 0.89
+    var surfaceBlue: Double = 0.86
+
     let knobMinDistance: CGFloat = 22
     let knobMaxDistance: CGFloat = 60
 
@@ -17,6 +25,27 @@ final class ShadowModel {
     var shadowColor: Color {
         get { gradientColors[0] }
         set { gradientColors[0] = newValue }
+    }
+
+    /// Surface color the tinted shadow is derived from, exposed as a `Color`
+    /// so it can be driven directly by a `ColorPicker`.
+    var surfaceColor: Color {
+        get { Color(red: surfaceRed, green: surfaceGreen, blue: surfaceBlue) }
+        set {
+            guard let c = NSColor(newValue).usingColorSpace(.sRGB) else { return }
+            surfaceRed = Double(c.redComponent)
+            surfaceGreen = Double(c.greenComponent)
+            surfaceBlue = Double(c.blueComponent)
+        }
+    }
+
+    /// The color actually used to render/emit the shadow: the tinted color
+    /// derived from the surface when tinting is on, otherwise the picked
+    /// shadow color. Solid mode only — gradients always use `gradientColors`.
+    var effectiveShadowColor: Color {
+        isTinted
+            ? Color.happyShadowTint(surfaceRed: surfaceRed, green: surfaceGreen, blue: surfaceBlue)
+            : shadowColor
     }
 
     // MARK: - Derived shadow properties
@@ -100,7 +129,7 @@ final class ShadowModel {
         } else {
             return """
             .happyShadow(
-                color: \(codeForColor(shadowColor)),
+                color: \(codeForColor(effectiveShadowColor)),
                 radius: \(fmt(shadowRadius)),
                 opacity: \(fmtOp(shadowOpacity)),
                 x: \(fmt(shadowX)),

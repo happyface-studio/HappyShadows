@@ -50,80 +50,19 @@ public struct SoftShadow: ViewModifier {
         self.yOffset = yOffset
     }
 
-    /// Calculates the dynamic radius based on offset magnitude.
-    /// - Parameter baseRadius: The base radius to adjust.
-    /// - Returns: An adjusted radius that takes into account the shadow's offset.
-    private func dynamicRadius(_ baseRadius: CGFloat) -> CGFloat {
-        let offsetMagnitude = sqrt(pow(xOffset, 2) + pow(yOffset, 2))
-        let radiusMultiplier = max(1.0, 1.0 + (offsetMagnitude / 32) * 0.5)
-        return baseRadius * radiusMultiplier
-    }
-
     public func body(content: Content) -> some View {
-        content
-            // Layer 1: Tight shadow
-            .modifier(InnerShadowLayer(
-                color: color,
-                radius: dynamicRadius(radius / 16),
-                opacity: opacity,
-                xOffset: xOffset / 16,
-                yOffset: yOffset / 16
-            ))
-            // Layer 2: Medium shadow
-            .modifier(InnerShadowLayer(
-                color: color,
-                radius: dynamicRadius(radius / 8),
-                opacity: opacity,
-                xOffset: xOffset / 8,
-                yOffset: yOffset / 8
-            ))
-            // Layer 3: Wide shadow
-            .modifier(InnerShadowLayer(
-                color: color,
-                radius: dynamicRadius(radius / 4),
-                opacity: opacity,
-                xOffset: xOffset / 4,
-                yOffset: yOffset / 4
-            ))
-            // Layer 4: Broader shadow
-            .modifier(InnerShadowLayer(
-                color: color,
-                radius: dynamicRadius(radius / 2),
-                opacity: opacity,
-                xOffset: xOffset / 2,
-                yOffset: yOffset / 2
-            ))
-            // Layer 5: Broadest shadow
-            .modifier(InnerShadowLayer(
-                color: color,
-                radius: dynamicRadius(radius),
-                opacity: opacity,
-                xOffset: xOffset,
-                yOffset: yOffset
-            ))
-    }
-
-    /// A single layer of the soft shadow effect.
-    private struct InnerShadowLayer: ViewModifier {
-        let color: Color
-        let radius: CGFloat
-        let opacity: Double
-        let xOffset: CGFloat
-        let yOffset: CGFloat
-
-        /// Calculates the final y-offset including dynamic adjustments.
-        private var calculatedYOffset: CGFloat {
-            yOffset + ((yOffset >= 0 ? 1 : -1) * radius) + ShadowConstants.additionalBlur
-        }
-
-        func body(content: Content) -> some View {
-            content
-                .shadow(
-                    color: color.opacity(opacity),
-                    radius: radius + ShadowConstants.additionalBlur,
-                    x: xOffset,
-                    y: calculatedYOffset
-                )
-        }
+        let layers = ShadowLayerModel.computeLayers(
+            radius: radius, opacity: opacity, x: xOffset, y: yOffset
+        )
+        // compositingGroup flattens the content to one texture first, so the
+        // five blur passes run on a rasterized silhouette instead of
+        // re-rendering the view hierarchy five times.
+        return content
+            .compositingGroup()
+            .shadow(color: color.opacity(layers[0].alpha), radius: layers[0].blurRadius, x: layers[0].offsetX, y: layers[0].offsetY)
+            .shadow(color: color.opacity(layers[1].alpha), radius: layers[1].blurRadius, x: layers[1].offsetX, y: layers[1].offsetY)
+            .shadow(color: color.opacity(layers[2].alpha), radius: layers[2].blurRadius, x: layers[2].offsetX, y: layers[2].offsetY)
+            .shadow(color: color.opacity(layers[3].alpha), radius: layers[3].blurRadius, x: layers[3].offsetX, y: layers[3].offsetY)
+            .shadow(color: color.opacity(layers[4].alpha), radius: layers[4].blurRadius, x: layers[4].offsetX, y: layers[4].offsetY)
     }
 }

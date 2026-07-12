@@ -9,6 +9,7 @@ import {
   generateGradientTailwind,
   generateSwiftUI,
   generateGradientSwiftUI,
+  tintShadowColor,
 } from "@happy-shadows/core";
 import type { RGBAColor, ShadowParams, GradientShadowParams, ShadowLayer } from "@happy-shadows/core";
 import type { UIMessage, ApplyMessage } from "./messages";
@@ -25,6 +26,9 @@ interface State {
   colors: string[];
   isGradient: boolean;
   isDark: boolean;
+  // Tinted shadow: derive shadow color from the surface it falls on
+  isTinted: boolean;
+  surfaceColor: string; // hex
 }
 
 const KNOB_MIN = 22;
@@ -67,6 +71,8 @@ function App() {
     colors: ["#000000", "#8B5CF6"],
     isGradient: false,
     isDark: false,
+    isTinted: false,
+    surfaceColor: "#e8e4dc",
   });
   const [selectionCount, setSelectionCount] = useState(0);
   const [tab, setTab] = useState<Tab>("CSS");
@@ -115,8 +121,11 @@ function App() {
   const brightness = Math.round((shadowOpacity / 0.4) * 100);
 
   const rgbaColors = state.colors.map(hexToRgba);
+  const solidColor = state.isTinted
+    ? tintShadowColor(rgbaColors[0], hexToRgba(state.surfaceColor))
+    : rgbaColors[0];
   const solidParams: ShadowParams = {
-    color: rgbaColors[0],
+    color: solidColor,
     radius: shadowRadius,
     opacity: shadowOpacity,
     x: shadowX,
@@ -401,6 +410,45 @@ function App() {
                 <button onClick={() => setState((s) => ({ ...s, colors: s.colors.slice(0, -1) }))} style={circleBtn}>−</button>
               )}
             </>
+          )}
+          {/* Tinted shadow: derive color from surface (solid mode only) */}
+          {!state.isGradient && (
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <button
+                onClick={() => setState((s) => ({ ...s, isTinted: !s.isTinted }))}
+                style={{
+                  padding: "4px 10px",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  border: sectionBorder,
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  background: state.isTinted ? "#4a90ff" : "var(--surface)",
+                  color: state.isTinted ? "#fff" : "var(--text-dim)",
+                }}
+              >
+                Tinted
+              </button>
+              {state.isTinted && (
+                <label style={{ position: "relative", cursor: "pointer" }} title="Surface color">
+                  <div
+                    style={{
+                      width: 22,
+                      height: 22,
+                      borderRadius: 6,
+                      background: state.surfaceColor,
+                      border: isLight ? "2px solid rgba(0,0,0,0.1)" : "2px solid rgba(255,255,255,0.2)",
+                    }}
+                  />
+                  <input
+                    type="color"
+                    value={state.surfaceColor}
+                    onChange={(e) => setState((s) => ({ ...s, surfaceColor: e.target.value }))}
+                    style={{ position: "absolute", inset: 0, opacity: 0, width: "100%", height: "100%", cursor: "pointer" }}
+                  />
+                </label>
+              )}
+            </div>
           )}
           <div style={{ flex: 1 }} />
           <div style={{ display: "flex", gap: 2, padding: 2, borderRadius: 12, background: "var(--surface-2)" }}>

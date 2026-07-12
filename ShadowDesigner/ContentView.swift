@@ -43,7 +43,7 @@ struct ContentView: View {
 
                 LightSourceView(
                     orbitalRadius: model.knobDistance,
-                    tint: model.isGradient ? model.gradientColors.last! : model.shadowColor
+                    tint: model.isGradient ? model.gradientColors.last! : model.effectiveShadowColor
                 )
                 .position(lightPos)
 
@@ -125,7 +125,7 @@ struct ContentView: View {
             )
         } else {
             card.happyShadow(
-                color: model.shadowColor,
+                color: model.effectiveShadowColor,
                 radius: model.shadowRadius,
                 opacity: model.shadowOpacity,
                 x: model.shadowX,
@@ -184,6 +184,16 @@ struct ContentView: View {
                 Text(model.colorName)
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(.secondary)
+
+                // Tinted shadow: derive color from surface (solid mode only)
+                Toggle("Tinted", isOn: $model.isTinted)
+                    .toggleStyle(.button)
+                    .controlSize(.small)
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+
+                if model.isTinted {
+                    roundColorPicker(color: $model.surfaceColor)
+                }
             }
 
             Spacer()

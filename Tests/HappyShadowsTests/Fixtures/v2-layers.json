@@ -1,0 +1,36 @@
+{
+  "params": { "radius": 12, "opacity": 0.4, "x": 4, "y": 8 },
+  "layers": [
+    { "offsetX": 0.48, "offsetY": 0.96, "blurRadius": 4.0,  "alpha": 0.14 },
+    { "offsetX": 1.6,  "offsetY": 3.2,  "blurRadius": 7.2,  "alpha": 0.1  },
+    { "offsetX": 2.8,  "offsetY": 5.6,  "blurRadius": 14.4, "alpha": 0.06 },
+    { "offsetX": 4.0,  "offsetY": 8.0,  "blurRadius": 24.0, "alpha": 0.04 },
+    { "offsetX": 0.0,  "offsetY": 1.2,  "blurRadius": 36.0, "alpha": 0.06 }
+  ],
+  "tints": [
+    {
+      "name": "blue-max",
+      "surface": { "r": 0.2, "g": 0.4, "b": 0.8 },
+      "shadowAlpha": 0.3,
+      "expected": { "r": 0.035, "g": 0.095, "b": 0.215, "a": 0.3 }
+    },
+    {
+      "name": "red-max hue wraparound",
+      "surface": { "r": 0.8, "g": 0.2, "b": 0.4 },
+      "shadowAlpha": 0.3,
+      "expected": { "r": 0.215, "g": 0.035, "b": 0.095, "a": 0.3 }
+    },
+    {
+      "name": "green-max",
+      "surface": { "r": 0.2, "g": 0.8, "b": 0.4 },
+      "shadowAlpha": 0.3,
+      "expected": { "r": 0.035, "g": 0.215, "b": 0.095, "a": 0.3 }
+    },
+    {
+      "name": "green-max negative-t wraparound",
+      "surface": { "r": 0.4, "g": 0.8, "b": 0.2 },
+      "shadowAlpha": 0.3,
+      "expected": { "r": 0.095, "g": 0.215, "b": 0.035, "a": 0.3 }
+    }
+  ]
+}
