@@ -51,7 +51,8 @@ public extension View {
 
     /// Applies a soft shadow sized from an elevation value, for consistent shadow hierarchies.
     ///
-    /// Higher elevations produce larger, softer shadows.
+    /// Higher elevations produce larger, softer shadows. Light comes from above:
+    /// the blur radius equals `elevation` and the shadow drops by `elevation / 2`.
     ///
     /// ```swift
     /// VStack {
@@ -74,13 +75,14 @@ public extension View {
         x: CGFloat = 0,
         y: CGFloat = 0
     ) -> some View {
-        modifier(
+        let shadow = ElevationModel.parameters(elevation: elevation, x: x, y: y)
+        return modifier(
             SoftShadow(
                 color: color,
-                radius: elevation,
+                radius: shadow.radius,
                 opacity: opacity,
-                xOffset: x == 0 ? 0 : x + (elevation / 2),
-                yOffset: y == 0 ? 0 : y + (elevation / 2)
+                xOffset: shadow.x,
+                yOffset: shadow.y
             )
         )
     }

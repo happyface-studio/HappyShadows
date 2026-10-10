@@ -57,32 +57,26 @@ public struct GradientShadow<G: GradientStyle>: ViewModifier {
         let layers = ShadowLayerModel.computeLayers(
             radius: radius, opacity: opacity, x: xOffset, y: yOffset
         )
+        // Every layer is masked by the original content, side by side in one
+        // background. (Chaining one `.background` per layer made each layer's
+        // mask include all earlier layers: the content was rendered 2^5 = 32
+        // times and outer layers grew from blurred shadows, not the silhouette.)
+        // Reversed so the contact layer sits closest to the content.
         return content
-            .compositingGroup()
-            .modifier(GradientLayer(gradient: gradient, layer: layers[0]))
-            .modifier(GradientLayer(gradient: gradient, layer: layers[1]))
-            .modifier(GradientLayer(gradient: gradient, layer: layers[2]))
-            .modifier(GradientLayer(gradient: gradient, layer: layers[3]))
-            .modifier(GradientLayer(gradient: gradient, layer: layers[4]))
-    }
-
-    /// A single layer of the gradient shadow effect.
-    private struct GradientLayer: ViewModifier {
-        let gradient: G
-        let layer: ResolvedShadowLayer
-
-        func body(content: Content) -> some View {
-            content
-                .background {
-                    Rectangle()
-                        .fill(gradient)
-                        .opacity(layer.alpha)
-                        .mask {
-                            content
-                        }
-                        .offset(x: layer.offsetX, y: layer.offsetY)
-                        .blur(radius: layer.blurRadius)
+            .background {
+                ZStack {
+                    ForEach(Array(layers.indices.reversed()), id: \.self) { index in
+                        let layer = layers[index]
+                        Rectangle()
+                            .fill(gradient)
+                            .opacity(layer.alpha)
+                            .mask {
+                                content
+                            }
+                            .offset(x: layer.offsetX, y: layer.offsetY)
+                            .blur(radius: layer.blurRadius)
+                    }
                 }
-        }
+            }
     }
 }
