@@ -18,5 +18,5 @@ public enum MarketingStyle {
         endPoint: .bottomTrailing
     )
     
-    static let backgroundGradientOpacity: CGFloat = 0.1
+    static let backgroundGradientOpacity: Double = 0.1
 }

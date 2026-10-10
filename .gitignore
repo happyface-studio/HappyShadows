@@ -99,8 +99,6 @@ DerivedData/
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
 
-# Marketing assets
-/Tests/Artifacts/
 
 # Node / pnpm
 node_modules/
@@ -111,6 +109,7 @@ packages/shadow-core/dist/
 packages/web/dist/
 packages/figma-plugin/dist/
 packages/framer-plugin/dist/
+*.tsbuildinfo
 .firecrawl/
 
 # Generated macOS download (built by Scripts/build-dmg.sh)

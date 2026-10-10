@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+// Slider is unavailable on tvOS, and this demo is compiled into the library.
+#if !os(tvOS)
+
 struct ComparisonDemo: View {
     @State private var color: Color = Color.black.opacity(0.25)
     @State private var shadowRadius: CGFloat = 8
@@ -144,3 +147,5 @@ struct ComparisonDemo: View {
 #Preview("Comparing Shadows") {
     ComparisonDemo()
 }
+
+#endif
