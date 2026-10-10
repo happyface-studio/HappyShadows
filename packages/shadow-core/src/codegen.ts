@@ -109,8 +109,8 @@ export function generateGradientSwiftUI(params: GradientShadowParams): string {
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     ),
-    opacity: ${fmtN(opacity)},
     radius: ${fmtSw(radius)},
+    opacity: ${fmtN(opacity)},
     x: ${fmtSw(x)},
     y: ${fmtSw(y)}
 )`;

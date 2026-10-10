@@ -17,7 +17,7 @@ import SwiftUI
 ///  Text("Hello")
 ///      .padding()
 ///      .background(Color.white)
-///      .gradientShadow(
+///      .happyGradientShadow(
 ///          gradient: LinearGradient(colors: [.blue, .purple], 
 ///                                 startPoint: .topLeading,
 ///                                 endPoint: .bottomTrailing),

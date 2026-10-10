@@ -120,8 +120,8 @@ final class ShadowModel {
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 ),
-                opacity: \(fmtOp(shadowOpacity)),
                 radius: \(fmt(shadowRadius)),
+                opacity: \(fmtOp(shadowOpacity)),
                 x: \(fmt(shadowX)),
                 y: \(fmt(shadowY))
             )

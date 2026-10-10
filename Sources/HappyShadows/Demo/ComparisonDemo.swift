@@ -94,8 +94,8 @@ struct ComparisonDemo: View {
                     startPoint: .top,
                     endPoint: .bottom
                 ),
-                opacity: 0.2,
                 radius: shadowRadius,
+                opacity: 0.2,
                 x: xOffset,
                 y: yOffset
             )
