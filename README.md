@@ -163,7 +163,7 @@ download is included.
 
 ## How It Works
 
-HappyShadows splits each shadow into 5 physically-motivated layers — a contact shadow, three key-light layers with penumbra falloff, and one ambient layer. Alpha weights sum to 1.0 so the combined intensity matches your `opacity` input:
+HappyShadows splits each shadow into 5 physically-motivated layers — a contact shadow, three key-light layers with penumbra falloff, and one ambient layer. Alpha weights sum to 1.0, so in CSS, Figma and Framer the combined intensity matches your `opacity` input:
 
 | Layer   | Offset         | Blur      | Share of opacity |
 |---------|----------------|-----------|------------------|
@@ -172,6 +172,8 @@ HappyShadows splits each shadow into 5 physically-motivated layers — a contact
 | Key 2   | 0.70 × (x, y)  | 1.20R     | 15%              |
 | Key 3   | 1.00 × (x, y)  | 2.00R     | 10%              |
 | Ambient | (0, 0.15y)     | 3.00R     | 15%              |
+
+In SwiftUI the five layers are stacked `.shadow` modifiers on one rasterized silhouette, so the view renders only once. The trade-off: each layer also shadows the ones before it, which makes the result slightly darker close to the edge (about 15% at radius 12) than the CSS output of the same settings.
 
 ## Development
 

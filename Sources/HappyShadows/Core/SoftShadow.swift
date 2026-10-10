@@ -57,6 +57,11 @@ public struct SoftShadow: ViewModifier {
         // compositingGroup flattens the content to one texture first, so the
         // five blur passes run on a rasterized silhouette instead of
         // re-rendering the view hierarchy five times.
+        // Trade-off (deliberate): chained .shadow modifiers compound — each
+        // layer also shadows the earlier ones — so the result is a little
+        // darker near the edge than the CSS box-shadow list of the same
+        // layers. Drawing layers independently would match CSS but render
+        // the content 6x; see README "How It Works".
         return content
             .compositingGroup()
             .shadow(color: color.opacity(layers[0].alpha), radius: layers[0].blurRadius, x: layers[0].offsetX, y: layers[0].offsetY)
