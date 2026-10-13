@@ -118,8 +118,8 @@ struct ContentView: View {
         if model.isGradient {
             card.happyGradientShadow(
                 gradient: model.gradientForShadow,
-                opacity: model.shadowOpacity,
                 radius: model.shadowRadius,
+                opacity: model.shadowOpacity,
                 x: model.shadowX,
                 y: model.shadowY
             )

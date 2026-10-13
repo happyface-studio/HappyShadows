@@ -40,8 +40,8 @@ struct GradientShowcaseView: View {
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 ),
-                opacity: 0.2,
                 radius: 32,
+                opacity: 0.2,
                 y: 16
             )
     }

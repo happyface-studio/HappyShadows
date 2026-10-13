@@ -37,4 +37,23 @@ final class LayerModelTests: XCTestCase {
             XCTAssertEqual(got.alpha, want.alpha, accuracy: 1e-6)
         }
     }
+
+    func testElevationDropsShadowByDefault() {
+        let p = ElevationModel.parameters(elevation: 16, x: 0, y: 0)
+        XCTAssertEqual(p.radius, 16)
+        XCTAssertEqual(p.x, 0)
+        XCTAssertEqual(p.y, 8, "elevation presets must cast downward without explicit offsets")
+    }
+
+    func testElevationOffsetsAreAdditive() {
+        let p = ElevationModel.parameters(elevation: 8, x: 3, y: -2)
+        XCTAssertEqual(p.x, 3, "x is an additional offset, not scaled by elevation")
+        XCTAssertEqual(p.y, 2)
+    }
+
+    func testNegativeElevationIsClamped() {
+        let p = ElevationModel.parameters(elevation: -4, x: 0, y: 0)
+        XCTAssertEqual(p.radius, 0)
+        XCTAssertEqual(p.y, 0)
+    }
 }

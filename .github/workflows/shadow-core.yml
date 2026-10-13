@@ -1,0 +1,27 @@
+# Runs the TypeScript shadow engine tests. They read the same fixture as the
+# Swift tests (Tests/HappyShadowsTests/Fixtures/v2-layers.json), so together
+# the two workflows keep the Swift and TS layer models in sync.
+
+name: shadow-core
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: pnpm
+    - name: Install
+      run: pnpm install --frozen-lockfile --filter @happy-shadows/core
+    - name: Test
+      run: pnpm --filter @happy-shadows/core test

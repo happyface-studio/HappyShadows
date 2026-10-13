@@ -21,7 +21,7 @@ Add the following dependency to your project:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/HappyFaceStudios/HappyShadows.git", from: "0.1")
+    .package(url: "https://github.com/happyface-studio/HappyShadows.git", from: "0.1.0")
 ]
 ```
 
@@ -33,7 +33,7 @@ import HappyShadows
 
 ## Basic Shadows
 
-Replace your existing shadows with realistic ones in one step. Just swap `.shadow()` with `.happyShadow()`.
+Replace your existing shadows with realistic ones in one step. Just swap `.shadow()` with `.happyShadow()` — with no arguments you get a soft black shadow (radius 8, opacity 0.25).
 
 ![Comparison](/Tests/HappyShadowsTests/Exports/comparison.png)
 
@@ -52,14 +52,14 @@ view.happyShadow(
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `color` | `Color` | `.black` | Shadow color |
-| `radius` | `CGFloat` | `0` | Blur radius |
+| `radius` | `CGFloat` | `8` | Blur radius |
 | `opacity` | `Double` | `0.25` | Shadow opacity (0.0 - 1.0) |
 | `x` | `CGFloat` | `0` | Horizontal offset |
 | `y` | `CGFloat` | `0` | Vertical offset |
 
 ## Elevation-based Shadows
 
-Create consistent shadows across your app using elevation levels. Higher elevation means more prominent shadows.
+Create consistent shadows across your app using elevation levels. Higher elevation means more prominent shadows: the blur radius equals the elevation and the shadow drops by half of it (light from above). Optional `x` / `y` are added on top.
 
 ![Elevation](/Tests/HappyShadowsTests/Exports/elevation.png)
 
@@ -98,11 +98,10 @@ struct ShadowCard: View {
                 .font(.headline)
             Text("Description")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
         .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
+        .background(.white, in: RoundedRectangle(cornerRadius: 16))
         .happyShadow(
             color: .black,
             radius: 12,
@@ -164,7 +163,7 @@ download is included.
 
 ## How It Works
 
-HappyShadows splits each shadow into 5 physically-motivated layers — a contact shadow, three key-light layers with penumbra falloff, and one ambient layer. Alpha weights sum to 1.0 so the combined intensity matches your `opacity` input:
+HappyShadows splits each shadow into 5 physically-motivated layers — a contact shadow, three key-light layers with penumbra falloff, and one ambient layer. Alpha weights sum to 1.0, so in CSS, Figma and Framer the combined intensity matches your `opacity` input:
 
 | Layer   | Offset         | Blur      | Share of opacity |
 |---------|----------------|-----------|------------------|
@@ -173,6 +172,21 @@ HappyShadows splits each shadow into 5 physically-motivated layers — a contact
 | Key 2   | 0.70 × (x, y)  | 1.20R     | 15%              |
 | Key 3   | 1.00 × (x, y)  | 2.00R     | 10%              |
 | Ambient | (0, 0.15y)     | 3.00R     | 15%              |
+
+In SwiftUI the five layers are stacked `.shadow` modifiers on one rasterized silhouette, so the view renders only once. The trade-off: each layer also shadows the ones before it, which makes the result slightly darker close to the edge (about 15% at radius 12) than the CSS output of the same settings.
+
+## Development
+
+```bash
+swift build && swift test              # library, ShadowDesigner and tests
+pnpm -C packages/shadow-core test      # TypeScript engine (shares the layer fixture with Swift)
+```
+
+The README images in `Tests/HappyShadowsTests/Exports/` are rendered by an opt-in test (macOS):
+
+```bash
+HAPPYSHADOWS_EXPORT_MARKETING=1 swift test --filter MarketingTests
+```
 
 ## Platform Support
 

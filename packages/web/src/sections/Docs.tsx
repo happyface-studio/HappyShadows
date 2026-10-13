@@ -2,7 +2,7 @@ import { GITHUB_URL, SPM_URL } from "../constants";
 import { useReveal } from "../hooks/useReveal";
 
 const INSTALL = `dependencies: [
-    .package(url: "${SPM_URL}", from: "0.1")
+    .package(url: "${SPM_URL}", from: "0.1.0")
 ]`;
 
 const BASIC = `view.happyShadow(

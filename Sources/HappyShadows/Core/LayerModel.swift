@@ -32,3 +32,19 @@ enum ShadowLayerModel {
         }
     }
 }
+
+/// Maps an elevation preset to shadow parameters.
+///
+/// Light comes from above: the blur radius equals the elevation and the
+/// shadow drops by half of it. `x` / `y` are added on top, so callers can
+/// still nudge the direction without flipping it.
+enum ElevationModel {
+    static func parameters(
+        elevation: CGFloat,
+        x: CGFloat,
+        y: CGFloat
+    ) -> (radius: CGFloat, x: CGFloat, y: CGFloat) {
+        let elevation = max(0, elevation)
+        return (radius: elevation, x: x, y: y + elevation / 2)
+    }
+}

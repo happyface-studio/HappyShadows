@@ -32,7 +32,10 @@ let package = Package(
         ),
         .testTarget(
             name: "HappyShadowsTests",
-            dependencies: ["HappyShadows"]
+            dependencies: ["HappyShadows"],
+            // README images and the shared Swift/TS fixture are read from the
+            // source tree (#filePath), not bundled as resources.
+            exclude: ["Exports", "Fixtures"]
         ),
     ]
 )

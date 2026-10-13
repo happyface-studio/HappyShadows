@@ -33,12 +33,12 @@ public struct MarketingAssets {
         // Get the package directory by going up from the current source file
         let sourceFileURL = URL(fileURLWithPath: #file)
         let packageRoot = sourceFileURL
-            .deletingLastPathComponent() // Marketing
-            .deletingLastPathComponent() // HappyShadows
-            .deletingLastPathComponent() // Sources
-            .deletingLastPathComponent() // Root
+            .deletingLastPathComponent() // Tests/HappyShadowsTests/Marketing
+            .deletingLastPathComponent() // Tests/HappyShadowsTests
+            .deletingLastPathComponent() // Tests
+            .deletingLastPathComponent() // package root
         
-        // Create directory in Tests/Artifacts
+        // README images live in Tests/HappyShadowsTests/Exports
         let assetsURL = packageRoot
             .appendingPathComponent("Tests")
             .appendingPathComponent("HappyShadowsTests")
